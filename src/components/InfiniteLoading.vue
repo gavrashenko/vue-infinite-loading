@@ -94,25 +94,26 @@ export default {
     slotStyles() {
       const styles = {};
 
-      Object.keys(config.slots).forEach((key) => {
-        const name = kebabCase(key);
+      Object.keys(config.slots)
+        .forEach((key) => {
+          const name = kebabCase(key);
 
-        if (
-          // no slot and the configured default slot is not a Vue component
-          (
-            !this.$slots[name]
-            && !config.slots[key].render
-          )
-          // has slot and slot is pure text node
-          || (
-            this.$slots[name]
-            && !this.$slots[name][0].tag
-          )
-        ) {
-          // only apply default styles for pure text slot
-          styles[key] = SLOT_STYLES;
-        }
-      });
+          if (
+            // no slot and the configured default slot is not a Vue component
+            (
+              !this.$slots[name]
+              && !config.slots[key].render
+            )
+            // has slot and slot is pure text node
+            || (
+              this.$slots[name]
+              && !this.$slots[name][0].tag
+            )
+          ) {
+            // only apply default styles for pure text slot
+            styles[key] = SLOT_STYLES;
+          }
+        });
 
       return styles;
     },
@@ -135,6 +136,10 @@ export default {
       default: +new Date(),
     },
     onInfinite: Function,
+    isInitialLoad: {
+      type: Boolean,
+      default: true,
+    },
   },
   watch: {
     identifier() {
@@ -235,6 +240,11 @@ export default {
       warn(WARNINGS.INFINITE_EVENT);
     }
   },
+
+  created() {
+    this.isFirstLoad = this.isInitialLoad;
+  },
+
   /**
    * To adapt to keep-alive feature, but only work on Vue 2.2.0 and above, see: https://vuejs.org/v2/api/#keep-alive
    */
@@ -250,11 +260,11 @@ export default {
   },
   methods: {
     /**
-    * attempt trigger load
-    * @param {Boolean} isContinuousCall  the flag of continuous call, it will be true
-    *                                    if this method be called in the `loaded`
-    *                                    event handler
-    */
+     * attempt trigger load
+     * @param {Boolean} isContinuousCall  the flag of continuous call, it will be true
+     *                                    if this method be called in the `loaded`
+     *                                    event handler
+     */
     attemptLoad(isContinuousCall) {
       if (
         this.status !== STATUS.COMPLETE
@@ -286,9 +296,9 @@ export default {
       }
     },
     /**
-    * get current distance from the specified direction
-    * @return {Number}     distance
-    */
+     * get current distance from the specified direction
+     * @return {Number}     distance
+     */
     getCurrentDistance() {
       let distance;
 
@@ -308,10 +318,10 @@ export default {
       return distance;
     },
     /**
-    * get the first scroll parent of an element
-    * @param  {DOM} elm    cache element for recursive search
-    * @return {DOM}        the first scroll parent
-    */
+     * get the first scroll parent of an element
+     * @param  {DOM} elm    cache element for recursive search
+     * @return {DOM}        the first scroll parent
+     */
     getScrollParent(elm = this.$el) {
       let result;
 
